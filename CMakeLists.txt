@@ -4,4 +4,7 @@ project(AutoRelease)
 include(GNUInstallDirs)
 
 add_subdirectory(autorelease)
-add_subdirectory(examples)
+
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif ()
