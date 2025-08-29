@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(autorelease VERSION 0.0.1)
+project(autorelease VERSION 0.0.1 LANGUAGES C CXX)
 
 add_library(autorelease INTERFACE)
 add_library(autorelease::autorelease ALIAS autorelease)
@@ -26,10 +26,11 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/autoreleaseConfigVersion.cmake"
     COMPATIBILITY SameMajorVersion
+    ARCH_INDEPENDENT
 )
 configure_file("${PROJECT_SOURCE_DIR}/../cmake/autoreleaseConfig.cmake.in" autoreleaseConfig.cmake @ONLY)
 install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/autoreleaseConfigVersion.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/autoreleaseConfig.cmake"
-        DESTINATION lib/cmake/autorelease
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/autorelease
 )
