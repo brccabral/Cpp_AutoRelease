@@ -46,7 +46,7 @@ public:
         return obj_;
     }
 
-    explicit operator T() const
+    operator T() const
     {
         return obj_;
     }
