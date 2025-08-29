@@ -51,6 +51,43 @@ public:
         return obj_;
     }
 
+    constexpr explicit operator bool() const
+    {
+        return obj_ != Invalid;
+    }
+
+    constexpr bool operator==(const AutoRelease &other) const
+    {
+        return obj_ == other.obj_;
+    }
+
+    constexpr bool operator==(std::nullptr_t) const
+    {
+        return !*this;
+    }
+
+    constexpr bool operator==(std::nullopt_t) const
+    {
+        return !*this;
+    }
+
+    constexpr T operator*() const
+    {
+        return obj_;
+    }
+
+    constexpr const T *operator->() const
+    {
+        return &obj_;
+    }
+
+protected:
+
+    T &get()
+    {
+        return obj_;
+    }
+
 private:
 
     T obj_;
