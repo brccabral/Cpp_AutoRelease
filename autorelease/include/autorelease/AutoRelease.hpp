@@ -4,17 +4,17 @@
 #include <ranges>
 
 template<class T, T Invalid = {}>
-class AutoRelease
+class AutoReleaseBase
 {
 public:
 
-    AutoRelease() : AutoRelease({}, nullptr)
+    AutoReleaseBase() : AutoReleaseBase({}, nullptr)
     {}
 
-    AutoRelease(T obj, std::function<void(T &)> deleter) : obj_(obj), deleter_(deleter)
+    AutoReleaseBase(T obj, std::function<void(T &)> deleter) : obj_(obj), deleter_(deleter)
     {}
 
-    ~AutoRelease()
+    ~AutoReleaseBase()
     {
         if (obj_ != Invalid && deleter_)
         {
@@ -22,20 +22,20 @@ public:
         }
     }
 
-    AutoRelease(const AutoRelease &) = delete;
-    AutoRelease &operator=(const AutoRelease &) = delete;
+    AutoReleaseBase(const AutoReleaseBase &) = delete;
+    AutoReleaseBase &operator=(const AutoReleaseBase &) = delete;
 
-    AutoRelease(AutoRelease &&other) noexcept : AutoRelease()
+    AutoReleaseBase(AutoReleaseBase &&other) noexcept : AutoReleaseBase()
     {
         swap(other);
     };
-    AutoRelease &operator=(AutoRelease &&other) noexcept
+    AutoReleaseBase &operator=(AutoReleaseBase &&other) noexcept
     {
         swap(other);
         return *this;
     }
 
-    void swap(AutoRelease &other) noexcept
+    void swap(AutoReleaseBase &other) noexcept
     {
         std::ranges::swap(obj_, other.obj_);
         std::ranges::swap(deleter_, other.deleter_);
@@ -46,17 +46,12 @@ public:
         return obj_;
     }
 
-    operator T() const
-    {
-        return obj_;
-    }
-
     constexpr explicit operator bool() const
     {
-        return obj_ != Invalid;
+        return this->obj_ != Invalid;
     }
 
-    constexpr bool operator==(const AutoRelease &other) const
+    constexpr bool operator==(const AutoReleaseBase &other) const
     {
         return obj_ == other.obj_;
     }
@@ -87,9 +82,38 @@ protected:
     {
         return obj_;
     }
+    T obj_;
 
 private:
 
-    T obj_;
     std::function<void(T &)> deleter_;
+};
+
+// Wrapper with specialization
+template<class T, T Invalid = {}>
+class AutoRelease : public AutoReleaseBase<T, Invalid>
+{
+    using AutoReleaseBase<T, Invalid>::AutoReleaseBase;
+
+public:
+
+    // implicit conversion to T, conflicts with `bool`, therefore we need specialization for bool
+    operator T() const
+    {
+        return this->obj_;
+    }
+};
+
+// Specialization for bool
+template<>
+class AutoRelease<bool, false> : public AutoReleaseBase<bool>
+{
+    using AutoReleaseBase::AutoReleaseBase;
+
+public:
+
+    explicit operator bool() const
+    {
+        return this->obj_;
+    }
 };
