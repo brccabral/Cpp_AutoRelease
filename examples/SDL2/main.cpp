@@ -4,7 +4,7 @@
 
 int main()
 {
-    AutoRelease<int, 1> sdl_init(SDL_Init(SDL_INIT_VIDEO), [](const int &) { SDL_Quit(); });
+    AutoRelease<int, -1> sdl_init(SDL_Init(SDL_INIT_VIDEO), [](const int &) { SDL_Quit(); });
 
     AutoRelease<bool> img_init(IMG_Init(IMG_INIT_PNG), [](const bool &) { IMG_Quit(); });
 
