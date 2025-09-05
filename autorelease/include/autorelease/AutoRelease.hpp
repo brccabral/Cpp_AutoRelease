@@ -3,6 +3,40 @@
 #include <functional>
 #include <ranges>
 
+template<typename... Args>
+class AutoReleaseVoid
+{
+public:
+
+    AutoReleaseVoid(
+            std::function<void(Args &&...args)> caller, std::function<void()> deleter,
+            Args &&...args)
+        : deleter_(std::move(deleter))
+    {
+        caller(std::forward<Args>(args)...);
+    };
+
+    AutoReleaseVoid() : AutoReleaseVoid(nullptr, nullptr, nullptr)
+    {}
+
+    AutoReleaseVoid(const AutoReleaseVoid &) = delete;
+    AutoReleaseVoid &operator=(const AutoReleaseVoid &) = delete;
+    AutoReleaseVoid(AutoReleaseVoid &&) = default;
+    AutoReleaseVoid &operator=(AutoReleaseVoid &&) = default;
+
+    ~AutoReleaseVoid()
+    {
+        if (deleter_)
+        {
+            deleter_();
+        }
+    }
+
+private:
+
+    std::function<void()> deleter_;
+};
+
 template<class T, T Invalid = {}>
 class AutoReleaseBase
 {
