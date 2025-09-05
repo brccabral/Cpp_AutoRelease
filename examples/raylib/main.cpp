@@ -20,7 +20,7 @@ int main()
         AutoRelease<int> drawing(2, [](const int &) { EndDrawing(); });
         ClearBackground(RAYWHITE);
 
-        DrawTexture(texture.get(), 10, 10, WHITE);
+        DrawTexture(texture, 10, 10, WHITE);
     }
 
     return 0;

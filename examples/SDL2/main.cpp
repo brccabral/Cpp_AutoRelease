@@ -15,10 +15,10 @@ int main()
             SDL_DestroyWindow);
 
     const AutoRelease<SDL_Renderer *> renderer(
-            SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED), SDL_DestroyRenderer);
+            SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED), SDL_DestroyRenderer);
 
     const AutoRelease<SDL_Texture *> texture(
-            IMG_LoadTexture(renderer.get(), "resources/red_square.png"), SDL_DestroyTexture);
+            IMG_LoadTexture(renderer, "resources/red_square.png"), SDL_DestroyTexture);
     const SDL_Rect dst = {10, 10, 50, 50};
 
     bool isRunning = true;
@@ -33,12 +33,12 @@ int main()
             }
         }
 
-        SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
-        SDL_RenderClear(renderer.get());
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
 
-        SDL_RenderCopy(renderer.get(), texture.get(), nullptr, &dst);
+        SDL_RenderCopy(renderer, texture, nullptr, &dst);
 
-        SDL_RenderPresent(renderer.get());
+        SDL_RenderPresent(renderer);
     }
 
     return 0;
